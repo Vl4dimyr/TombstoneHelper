@@ -2,8 +2,10 @@
 using BepInEx.Configuration;
 using HarmonyLib;
 using Jotunn.Configs;
+using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using Logger = Jotunn.Logger;
@@ -16,6 +18,8 @@ namespace TombstoneHelper
     internal class TombstoneHelper : BaseUnityPlugin
     {
         public const string PluginGUID = "com.userstorm.tombstonehelper";
+
+        private CustomLocalization Localization;
 
         private static FieldInfo m_interactMaskField = AccessTools.Field(typeof(Player), "m_interactMask");
 
@@ -31,6 +35,7 @@ namespace TombstoneHelper
         {
             CreateConfigValues();
             AddInputs();
+            AddLocalizations();
             AddStatusEffects();
         }
         
@@ -81,12 +86,29 @@ namespace TombstoneHelper
             InputManager.Instance.AddButton(PluginGUID, ShortcutButton);
         }
 
+        private void AddLocalizations()
+        {
+            Localization = new CustomLocalization();
+            LocalizationManager.Instance.AddLocalization(Localization);
+
+            Localization.AddTranslation(
+                "English",
+                new Dictionary<string, string>
+                {
+                    { "open_tombstone", "Open Tombstone" },
+                    { "no_tombstone_nearby", "No tombstone nearby" },
+                    { "tombstone_nearby_effect_name", "Tombstone nearby" },
+                    { "tombstone_nearby_effect_start", "There is a tombstone nearby" }
+                }
+            );
+        }
+
         private void AddStatusEffects()
         {
             TombstoneNearbyStatusEffect = ScriptableObject.CreateInstance<StatusEffect>();
             TombstoneNearbyStatusEffect.name = "TombstoneNearbyStatusEffect";
             TombstoneNearbyStatusEffect.m_name = "$tombstone_nearby_effect_name";
-            TombstoneNearbyStatusEffect.m_icon = AssetUtils.LoadSpriteFromFile("TombstoneHelper/Assets/tombstone.png");
+            TombstoneNearbyStatusEffect.m_icon = AssetUtils.LoadSpriteFromFile("TombstoneHelper/tombstone.png");
             TombstoneNearbyStatusEffect.m_startMessageType = MessageHud.MessageType.Center;
             TombstoneNearbyStatusEffect.m_startMessage = "$tombstone_nearby_effect_start";
         }
