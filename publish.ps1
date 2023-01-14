@@ -66,11 +66,9 @@ if ($Target.Equals("Release")) {
     Copy-Item -Path "$PackagePath\README.md" -Destination "$ProjectPath\README.md" -Force
     Copy-Item -Path "$PackagePath\README.md" -Destination "$ProjectPath\..\README.md" -Force
 
-    Remove-Item -Path "$PackagePath\Assets" -Force -Recurse
+    # Remove-Item -Path "$PackagePath\Assets" -Force -Recurse
 
     # Copy-Item -Path "$ProjectPath\Assets" -Destination "$PackagePath\Assets" -Force -Recurse
-
-    Copy-Item -Path "$ProjectPath\tombstone.png" -Destination "$PackagePath\tombstone.png" -Force
 
     (Get-Content -Path "$PackagePath\manifest.json") -replace '{VERSION}', $version | Out-File -Encoding UTF8 -FilePath "$PackagePath\manifest.json"
 

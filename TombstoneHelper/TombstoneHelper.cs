@@ -105,10 +105,17 @@ namespace TombstoneHelper
 
         private void AddStatusEffects()
         {
+            var icon = AssetUtils.LoadSpriteFromFile("Vl4dimyr-TombstoneHelper/icon.png");
+
+            if (!icon)
+            {
+                icon = AssetUtils.LoadSpriteFromFile("TombstoneHelper/icon.png");
+            }
+
             TombstoneNearbyStatusEffect = ScriptableObject.CreateInstance<StatusEffect>();
             TombstoneNearbyStatusEffect.name = "TombstoneNearbyStatusEffect";
             TombstoneNearbyStatusEffect.m_name = "$tombstone_nearby_effect_name";
-            TombstoneNearbyStatusEffect.m_icon = AssetUtils.LoadSpriteFromFile("TombstoneHelper/tombstone.png");
+            TombstoneNearbyStatusEffect.m_icon = icon;
             TombstoneNearbyStatusEffect.m_startMessageType = MessageHud.MessageType.Center;
             TombstoneNearbyStatusEffect.m_startMessage = "$tombstone_nearby_effect_start";
         }
