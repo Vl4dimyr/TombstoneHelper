@@ -44,7 +44,7 @@ Interaction range = 5
 
 - Install [BepInExPack Valheim](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/) and [Jotunn](https://valheim.thunderstore.io/package/ValheimModding/Jotunn/)
 - Download the latest `TombstoneHelper_x.y.z.zip` [here](https://thunderstore.io/package/Vl4dimyr/TombstoneHelper/)
-- Extract and move the `TombstoneHelper.dll` into the `\BepInEx\plugins` folder
+- Extract and move contents of the ZIP file into the `\BepInEx\plugins\TombstoneHelper\` folder
 - (optional) Install [Official BepInEx ConfigurationManager](https://valheim.thunderstore.io/package/Azumatt/Official_BepInEx_ConfigurationManager/)
 
 ## Changelog
