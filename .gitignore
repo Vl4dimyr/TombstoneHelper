@@ -399,5 +399,5 @@ FodyWeavers.xsd
 
 # custom
 
-/TombstoneHelper/Package/Assets/
+/TombstoneHelper/Package/README.md
 /TombstoneHelper/Package/*.dll
