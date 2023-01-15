@@ -139,8 +139,6 @@
   </Target>
   <Target Name="JotunnPostBuildTaskWin" Condition="'$(OS)' == 'Windows_NT'">
     <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -File &quot;$(SolutionDir)publish.ps1&quot; -Target &quot;$(ConfigurationName)&quot; -TargetPath &quot;$(TargetDir.TrimEnd('\'))&quot; -TargetAssembly &quot;$(TargetFileName)&quot; -ValheimPath &quot;$(VALHEIM_INSTALL.TrimEnd('\'))&quot; -DeployPath &quot;$(MOD_DEPLOYPATH.TrimEnd('\'))&quot; -ProjectPath &quot;$(ProjectDir.TrimEnd('\'))&quot; " />
-    <!-- <Exec Command="xcopy &quot;$(ProjectDir)Assets&quot; &quot;$(MOD_DEPLOYPATH)\TombstoneHelper\Assets\&quot; /S /Y" /> -->
-    <!-- <Exec Command="echo f | xcopy &quot;$(ProjectDir)Package\icon.png&quot; &quot;$(MOD_DEPLOYPATH)\TombstoneHelper\icon.png&quot; /Y" /> -->
   </Target>
   <PropertyGroup>
     <BuildDependsOn>
