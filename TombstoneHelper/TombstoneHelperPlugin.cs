@@ -5,7 +5,6 @@ using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
-using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using Logger = Jotunn.Logger;
@@ -15,7 +14,7 @@ namespace TombstoneHelper
     [BepInPlugin(PluginGUID, "TombstoneHelper", "{VERSION}")]
     [BepInDependency(Jotunn.Main.ModGuid)]
     [NetworkCompatibility(CompatibilityLevel.NotEnforced, VersionStrictness.None)]
-    internal class TombstoneHelper : BaseUnityPlugin
+    internal class TombstoneHelperPlugin : BaseUnityPlugin
     {
         public const string PluginGUID = "com.userstorm.tombstonehelper";
 
@@ -33,6 +32,8 @@ namespace TombstoneHelper
 
         private void Awake()
         {
+            Assets.Init();
+
             CreateConfigValues();
             AddInputs();
             AddLocalizations();
@@ -91,48 +92,40 @@ namespace TombstoneHelper
             Localization = new CustomLocalization();
             LocalizationManager.Instance.AddLocalization(Localization);
 
-            Localization.AddTranslation(
-                "English",
-                new Dictionary<string, string>
-                {
-                    { "open_tombstone", "Open Tombstone" },
-                    { "no_tombstone_nearby", "No tombstone nearby" },
-                    { "tombstone_nearby_effect_name", "Tombstone nearby" },
-                    { "tombstone_nearby_effect_start", "There is a tombstone nearby" }
-                }
-            );
+            Localization.AddJsonFile("English", Assets.English);
+            Localization.AddJsonFile("German", Assets.German);
         }
 
         private void AddStatusEffects()
         {
-            var icon = AssetUtils.LoadSpriteFromFile("Vl4dimyr-TombstoneHelper/icon.png");
-
-            if (!icon)
-            {
-                icon = AssetUtils.LoadSpriteFromFile("TombstoneHelper/icon.png");
-            }
-
             TombstoneNearbyStatusEffect = ScriptableObject.CreateInstance<StatusEffect>();
             TombstoneNearbyStatusEffect.name = "TombstoneNearbyStatusEffect";
             TombstoneNearbyStatusEffect.m_name = "$tombstone_nearby_effect_name";
-            TombstoneNearbyStatusEffect.m_icon = icon;
+            TombstoneNearbyStatusEffect.m_icon = Assets.Tombstone;
             TombstoneNearbyStatusEffect.m_startMessageType = MessageHud.MessageType.Center;
             TombstoneNearbyStatusEffect.m_startMessage = "$tombstone_nearby_effect_start";
         }
 
         private void CheckForNearbyTombstone()
         {
+            var player = Player.m_localPlayer;
+
+            if (player == null)
+            {
+                return;
+            }
+
             TombStone tombStone = FindTombstone();
 
             if (tombStone != null && !HasTombstoneNearbyStatusEffect)
             {
-                Player.m_localPlayer.GetSEMan().AddStatusEffect(TombstoneNearbyStatusEffect, true, 0, 0f);
+                player.GetSEMan().AddStatusEffect(TombstoneNearbyStatusEffect, true, 0, 0f);
 
                 HasTombstoneNearbyStatusEffect = true;
             }
             else if (tombStone == null && HasTombstoneNearbyStatusEffect)
             {
-                Player.m_localPlayer.GetSEMan().RemoveStatusEffect(TombstoneNearbyStatusEffect, true);
+                player.GetSEMan().RemoveStatusEffect(TombstoneNearbyStatusEffect, true);
 
                 HasTombstoneNearbyStatusEffect = false;
             }
@@ -157,7 +150,9 @@ namespace TombstoneHelper
 
         private void HandleInput()
         {
-            if (ZInput.instance == null)
+            var player = Player.m_localPlayer;
+
+            if (ZInput.instance == null || player == null)
             {
                 return;
             }
@@ -168,7 +163,11 @@ namespace TombstoneHelper
 
                 if (tombStone != null)
                 {
-                    tombStone.Interact(Player.m_localPlayer, false, false);
+                    player.Interact(tombStone.gameObject, false, false);
+
+                    // prevent the "use" button from closing the tombstone immediately
+                    ZInput.ResetButtonStatus("Use");
+                    ZInput.ResetButtonStatus("JoyUse");
                 }
                 else if (MessageHud.instance != null && MessageHud.instance.m_msgQeue.Count == 0)
                 {

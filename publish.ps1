@@ -63,12 +63,7 @@ if ($Target.Equals("Release")) {
 
     Write-Host "$PackagePath\$TargetAssembly"
     Copy-Item -Path "$TargetPath\$TargetAssembly" -Destination "$PackagePath\$TargetAssembly" -Force
-    Copy-Item -Path "$PackagePath\README.md" -Destination "$ProjectPath\README.md" -Force
-    Copy-Item -Path "$PackagePath\README.md" -Destination "$ProjectPath\..\README.md" -Force
-
-    # Remove-Item -Path "$PackagePath\Assets" -Force -Recurse
-
-    # Copy-Item -Path "$ProjectPath\Assets" -Destination "$PackagePath\Assets" -Force -Recurse
+    Copy-Item -Path ".\README.md" -Destination "$PackagePath\README.md" -Force
 
     (Get-Content -Path "$PackagePath\manifest.json") -replace '{VERSION}', $version | Out-File -Encoding UTF8 -FilePath "$PackagePath\manifest.json"
 
@@ -78,7 +73,7 @@ if ($Target.Equals("Release")) {
     (Get-Content -Path "$PackagePath\manifest.json") -replace $version, '{VERSION}' | Out-File -Encoding UTF8 -FilePath "$PackagePath\manifest.json"
 }
 
-(Get-Content "$ProjectPath\$name.cs") -replace $version, '{VERSION}' | Out-File -encoding UTF8 "$ProjectPath\$name.cs"
+(Get-Content "$ProjectPath\$($name)Plugin.cs") -replace $version, '{VERSION}' | Out-File -encoding UTF8 "$ProjectPath\$($name)Plugin.cs"
 
 # Pop Location
 Pop-Location

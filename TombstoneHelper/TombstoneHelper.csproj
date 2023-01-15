@@ -99,12 +99,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
-    <Compile Include="TombstoneHelper.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="TombstoneHelperPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <EmbeddedResource Include="Assets\Translations\English\messages.json" />
+    <None Include="Assets\Translations\German\messages.json" />
     <None Include="packages.config" />
     <None Include="Package\README.md" />
   </ItemGroup>
@@ -112,7 +120,15 @@
     <None Include="Package\manifest.json" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Assets\Images\tombstone.png" />
     <Content Include="Package\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <MOD_DEPLOYPATH Condition="!Exists('$(MOD_DEPLOYPATH)')">$(VALHEIM_INSTALL)\BepInEx\plugins</MOD_DEPLOYPATH>
@@ -124,7 +140,7 @@
   <Target Name="JotunnPostBuildTaskWin" Condition="'$(OS)' == 'Windows_NT'">
     <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -File &quot;$(SolutionDir)publish.ps1&quot; -Target &quot;$(ConfigurationName)&quot; -TargetPath &quot;$(TargetDir.TrimEnd('\'))&quot; -TargetAssembly &quot;$(TargetFileName)&quot; -ValheimPath &quot;$(VALHEIM_INSTALL.TrimEnd('\'))&quot; -DeployPath &quot;$(MOD_DEPLOYPATH.TrimEnd('\'))&quot; -ProjectPath &quot;$(ProjectDir.TrimEnd('\'))&quot; " />
     <!-- <Exec Command="xcopy &quot;$(ProjectDir)Assets&quot; &quot;$(MOD_DEPLOYPATH)\TombstoneHelper\Assets\&quot; /S /Y" /> -->
-    <Exec Command="echo f | xcopy &quot;$(ProjectDir)Package\icon.png&quot; &quot;$(MOD_DEPLOYPATH)\TombstoneHelper\icon.png&quot; /Y" />
+    <!-- <Exec Command="echo f | xcopy &quot;$(ProjectDir)Package\icon.png&quot; &quot;$(MOD_DEPLOYPATH)\TombstoneHelper\icon.png&quot; /Y" /> -->
   </Target>
   <PropertyGroup>
     <BuildDependsOn>
