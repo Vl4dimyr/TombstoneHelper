@@ -18,9 +18,7 @@ namespace TombstoneHelper
     {
         public const string PluginGUID = "com.userstorm.tombstonehelper";
 
-        private CustomLocalization Localization;
-
-        private static FieldInfo m_interactMaskField = AccessTools.Field(typeof(Player), "m_interactMask");
+        private static FieldInfo interactMaskField = AccessTools.Field(typeof(Player), "m_interactMask");
 
         private ConfigEntry<float> InteractionRange;
         private ConfigEntry<KeyboardShortcut> ShortcutConfig;
@@ -69,10 +67,9 @@ namespace TombstoneHelper
                 "General",
                 "Interaction range",
                 5.0f,
-                new ConfigDescription(
-                    "Interaction range",
-                    new AcceptableValueRange<float>(0.1f, 10f)
-                )
+                // with ranges around 100 or more, the owner check starts to fail, sometimes it fails even earlier,
+                // so we limit the range to 100 for now as it seemed to be working most of the time in testing
+                new ConfigDescription("Interaction range", new AcceptableValueRange<float>(0.1f, 100f))
             );
         }
 
@@ -89,11 +86,10 @@ namespace TombstoneHelper
 
         private void AddLocalizations()
         {
-            Localization = new CustomLocalization();
-            LocalizationManager.Instance.AddLocalization(Localization);
+            CustomLocalization localization = LocalizationManager.Instance.GetLocalization();
 
-            Localization.AddJsonFile("English", Assets.English);
-            Localization.AddJsonFile("German", Assets.German);
+            localization.AddJsonFile("English", Assets.English);
+            localization.AddJsonFile("German", Assets.German);
         }
 
         private void AddStatusEffects()
@@ -134,8 +130,8 @@ namespace TombstoneHelper
         private TombStone FindTombstone()
         {
             var player = Player.m_localPlayer;
-            var interactMask = (int)m_interactMaskField.GetValue(player);
-            var colliders = Physics.OverlapSphere(player.transform.position, this.InteractionRange.Value, interactMask);
+            var interactMask = (int)interactMaskField.GetValue(player);
+            var colliders = Physics.OverlapSphere(player.transform.position, InteractionRange.Value, interactMask);
 
             foreach (var collider in colliders)
             {
@@ -152,28 +148,30 @@ namespace TombstoneHelper
         {
             var player = Player.m_localPlayer;
 
-            if (ZInput.instance == null || player == null)
+            if (
+                ZInput.instance == null ||
+                player == null ||
+                ShortcutButton == null ||
+                !ZInput.GetButtonDown(ShortcutButton.Name)
+            )
             {
                 return;
             }
 
-            if (ShortcutButton != null && ZInput.GetButtonDown(ShortcutButton.Name))
+            TombStone tombStone = FindTombstone();
+
+            if (tombStone == null)
             {
-                TombStone tombStone = FindTombstone();
+                MessageHud.instance?.ShowMessage(MessageHud.MessageType.Center, "$no_tombstone_nearby");
 
-                if (tombStone != null)
-                {
-                    player.Interact(tombStone.gameObject, false, false);
-
-                    // prevent the "use" button from closing the tombstone immediately
-                    ZInput.ResetButtonStatus("Use");
-                    ZInput.ResetButtonStatus("JoyUse");
-                }
-                else if (MessageHud.instance != null && MessageHud.instance.m_msgQeue.Count == 0)
-                {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$no_tombstone_nearby");
-                }
+                return;
             }
+
+            tombStone.gameObject.GetComponentInParent<Interactable>()?.Interact(player, false, false);
+
+            // prevent the "use" button from closing the tombstone immediately
+            ZInput.ResetButtonStatus("Use");
+            ZInput.ResetButtonStatus("JoyUse");
         }
     }
 }

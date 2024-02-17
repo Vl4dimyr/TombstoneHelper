@@ -2,7 +2,7 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <!-- Valheim install folder. This is normally found automatically, uncomment to overwrite it. Needs to be your path to the base Valheim folder. -->
-    <VALHEIM_INSTALL>E:\Games\Steam\steamapps\common\Valheim</VALHEIM_INSTALL>
+    <VALHEIM_INSTALL>D:\Games\Steam\steamapps\common\Valheim</VALHEIM_INSTALL>
 
     <BEPINEX_PATH>$(AppData)\r2modmanPlus-local\Valheim\profiles\TombstoneHelper\BepInEx</BEPINEX_PATH>
 
