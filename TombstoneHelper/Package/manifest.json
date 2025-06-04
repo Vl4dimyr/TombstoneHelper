@@ -5,6 +5,6 @@
   "description": "This mod allows you to access a nearby tombstone, its intended purpose is to access glitched tombstones in dungeons which are not reachable otherwise.",
   "dependencies": [
     "denikson-BepInExPack_Valheim-5.4.2202",
-    "ValheimModding-Jotunn-2.16.2"
+    "ValheimModding-Jotunn-2.25.0"
   ]
 }
